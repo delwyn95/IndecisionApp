@@ -27,6 +27,34 @@ var IndecisionApp = function (_React$Component) {
     }
 
     _createClass(IndecisionApp, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            try {
+                var json = localStorage.getItem('options');
+                var options = JSON.parse(json);
+                if (options) {
+                    this.setState(function () {
+                        return { options: options };
+                    });
+                }
+            } catch (e) {
+                //Do nothing at all
+            }
+        }
+    }, {
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (prevState.options.length !== this.state.options.length) {
+                var json = JSON.stringify(this.state.options);
+                localStorage.setItem('options', json);
+            }
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            console.log('componentWillUnmount');
+        }
+    }, {
         key: 'handleDeleteOptions',
         value: function handleDeleteOptions() {
             this.setState(function () {
@@ -65,6 +93,7 @@ var IndecisionApp = function (_React$Component) {
             this.setState(function (prevState) {
                 return {
                     options: prevState.options.concat(option)
+
                 };
             });
         }
@@ -79,8 +108,8 @@ var IndecisionApp = function (_React$Component) {
                 null,
                 React.createElement(Header, { subtitle: subtitle }),
                 React.createElement(Action, {
-                    handlePick: this.handlePick,
-                    hasOptions: this.state.options.length > 0
+                    hasOptions: this.state.options.length > 0,
+                    handlePick: this.handlePick
                 }),
                 React.createElement(Options, {
                     options: this.state.options,
@@ -97,6 +126,9 @@ var IndecisionApp = function (_React$Component) {
     return IndecisionApp;
 }(React.Component);
 
+IndecisionApp.defaultProps = {
+    options: []
+};
 var Header = function Header(props) {
     return React.createElement(
         'div',
@@ -114,14 +146,6 @@ var Header = function Header(props) {
     );
 };
 
-Header.defaultProps = {
-    title: 'Indecision'
-};
-
-IndecisionApp.defaultProps = {
-    options: []
-};
-
 var Action = function Action(props) {
     return React.createElement(
         'div',
@@ -129,8 +153,8 @@ var Action = function Action(props) {
         React.createElement(
             'button',
             {
-                disabled: !props.hasOptions,
-                onClick: props.handlePick
+                onClick: props.handlePick,
+                disabled: !props.hasOptions
             },
             'What Should I Do?'
         )
@@ -147,10 +171,15 @@ var Options = function Options(props) {
             { onClick: props.handleDeleteOptions },
             'Remove All'
         ),
-        props.options.map(function (value) {
+        props.options.length === 0 && React.createElement(
+            'p',
+            null,
+            'Please add an option to get started!'
+        ),
+        props.options.map(function (option) {
             return React.createElement(Option, {
-                key: value,
-                optionText: value,
+                key: option,
+                optionText: option,
                 handleDeleteOption: props.handleDeleteOption
             });
         })
@@ -169,7 +198,7 @@ var Option = function Option(props) {
                     props.handleDeleteOption(props.optionText);
                 }
             },
-            'Remove'
+            'remove'
         )
     );
 };
@@ -193,15 +222,20 @@ var AddOptions = function (_React$Component2) {
         key: 'handleAddOption',
         value: function handleAddOption(e) {
             e.preventDefault();
-            //Trim() erases the leading and trailing spaces.
-            var option = e.target.elements.input.value.trim();
+
+            var option = e.target.elements.option.value.trim();
             var error = this.props.handleAddOption(option);
 
-            //sets error value as error in state.
             this.setState(function () {
                 return { error: error };
             });
+
+            if (!error) {
+                e.target.elements.option.value = '';
+            }
         }
+        // onChangeText = (text) => {this.setState({name:})}
+
     }, {
         key: 'render',
         value: function render() {
@@ -216,7 +250,7 @@ var AddOptions = function (_React$Component2) {
                 React.createElement(
                     'form',
                     { onSubmit: this.handleAddOption },
-                    React.createElement('input', { type: 'text', name: 'input' }),
+                    React.createElement('input', { type: 'text', name: 'option' }),
                     React.createElement(
                         'button',
                         null,

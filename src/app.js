@@ -9,6 +9,27 @@ class IndecisionApp extends React.Component {
             options: props.options
         };
     }
+    componentDidMount() {
+        try{
+            const json = localStorage.getItem('options');
+            const options = JSON.parse(json);
+            if(options){
+                this.setState(()=> ({ options }))
+            }
+        } catch (e){
+            //Do nothing at all
+        }
+    }
+    componentDidUpdate(prevProps,prevState){
+        if (prevState.options.length !== this.state.options.length){
+            const json = JSON.stringify(this.state.options);
+            localStorage.setItem('options',json);
+        }
+        
+    }
+    componentWillUnmount(){
+        console.log('componentWillUnmount');
+    }
     handleDeleteOptions(){
         this.setState(() => ( { options:[] } ));
     }
@@ -31,7 +52,8 @@ class IndecisionApp extends React.Component {
         } 
 
         this.setState((prevState) => ({
-            options: prevState.options.concat(option) 
+            options: prevState.options.concat(option),
+
         }));
     }
     render() {
@@ -42,8 +64,8 @@ class IndecisionApp extends React.Component {
             <div>
                 <Header subtitle={subtitle}/>
                 <Action 
-                handlePick={this.handlePick}
                 hasOptions={this.state.options.length > 0} 
+                handlePick={this.handlePick}
                 />
                 <Options 
                     options={this.state.options} 
@@ -57,6 +79,9 @@ class IndecisionApp extends React.Component {
         );
     }
 } 
+IndecisionApp.defaultProps = {
+    options: []
+}
 const Header = (props) => {
     return(
         <div>
@@ -66,20 +91,12 @@ const Header = (props) => {
     );
 }
 
-Header.defaultProps ={
-    title: 'Indecision'
-}
-
-IndecisionApp.defaultProps = {
-        options: []
-}
-
 const Action = (props) => {
     return(
         <div>
         <button 
-            disabled={!props.hasOptions} 
             onClick={props.handlePick}
+            disabled={!props.hasOptions} 
         > 
         What Should I Do?
         </button>
@@ -93,11 +110,12 @@ const Options = (props) => {
     return(
         <div>
             <button onClick={props.handleDeleteOptions}>Remove All</button>
+            {props.options.length === 0 && <p>Please add an option to get started!</p>} 
             {
-                props.options.map((value) => (
+                props.options.map((option) => (
                         <Option 
-                        key={value} 
-                        optionText={value}
+                        key={option} 
+                        optionText={option}
                         handleDeleteOption={props.handleDeleteOption}
                     />
                 ))
@@ -115,10 +133,9 @@ const Option = (props) => {
                     props.handleDeleteOption(props.optionText);
                 }}
             >
-                Remove
+                remove
             </button>
         </div>
-
     );
 };
 
@@ -133,19 +150,23 @@ class AddOptions extends React.Component {
     
     handleAddOption(e) {
         e.preventDefault();
-        //Trim() erases the leading and trailing spaces.
-        const option = e.target.elements.input.value.trim();
+
+        const option = e.target.elements.option.value.trim();
         const error = this.props.handleAddOption(option);
 
-        //sets error value as error in state.
         this.setState(()=>({ error }));
+
+        if (!error){
+            e.target.elements.option.value = '';
+        }
     }
+    // onChangeText = (text) => {this.setState({name:})}
     render(){
         return(
             <div>
                 {this.state.error && <p>{this.state.error}</p>}
                 <form onSubmit={this.handleAddOption}>
-                <input type="text" name="input" />
+                <input type="text" name="option" />
                 <button>Add Option</button>
                 </form>
             </div>
