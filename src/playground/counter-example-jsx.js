@@ -18,6 +18,7 @@ const reset = () => {
 const appRoot = document.getElementById('app');
 
 
+
 const renderCounterApp = () => {
     const templateTwo = (
         <div>
