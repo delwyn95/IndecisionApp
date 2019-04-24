@@ -1,16 +1,15 @@
 import React from 'react';
 
-const Action = (props) => {
-    return(
-        <div>
+const Action = (props) => (
+    <div>
         <button 
+            className= "big-button"
             onClick={props.handlePick}
             disabled={!props.hasOptions} 
         > 
-        What Should I Do?
+        Random Option Generator
         </button>
     </div>
-    );
-}
+);
 
 export default Action;
