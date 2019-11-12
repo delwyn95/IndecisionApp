@@ -1,7 +1,7 @@
 // Widget
 .widget {
-  background:$light-blue;
-  margin-bottom:$xl-size;
+  background: $light-blue;
+  margin-bottom: $xl-size;
 }
 
 .widget__message {
@@ -10,24 +10,17 @@
   margin: 0;
   padding: $l-size;
   text-align: center;
-  
 }
 
 // Widget Header
-
 .widget-header {
   background: $blue;
   color: $off-white;
   display: flex;
   justify-content: space-between;
   padding: $m-size;
-  
 }
 
 .widget-header__title {
   margin: 0;
 }
-
-// setup an element selector for widget header
-// set margin
-// use the class
