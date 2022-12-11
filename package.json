@@ -21,7 +21,7 @@
     "babel-preset-env": "1.5.2",
     "babel-preset-react": "6.24.1",
     "css-loader": "0.28.4",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "live-server": "^1.2.1",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.11.0",
